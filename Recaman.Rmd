@@ -1,0 +1,89 @@
+---
+title: "Recaman"
+author: "Ryan Harrington"
+date: "9/5/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# install.packages("tidyverse")
+library(tidyverse)
+# install.packages("ggforce")
+library(ggforce)
+theme_set(theme_void())
+```
+
+```{r}
+initial <- 0
+```
+
+a(0) = 0;
+for n > 0, a(n) = a(n-1) - n if positive and not already in sequence
+otherwise a(n) = a(n-1) + n
+
+```{r}
+recaman <- function(number_forward) {
+  
+  df <- data.frame(n = seq(from = 0, to = number_forward - 1, by = 1),
+                   # change = seq(from = 1, to = number_forward + 1, by = 1),
+                   value = as.integer(NA))
+  
+  for (row in 1:nrow(df)) {
+    
+    # print(paste("n:", df$n[row]))
+    
+    if (df$n[row] == 0) {
+      
+      df$value[row] <- 0
+      
+    } else {
+      
+      num_lower <- df$value[row - 1] - df$n[row]
+      # print(paste("lower:", num_lower))
+      num_upper <- df$value[row - 1] + df$n[row]
+      # print(paste("upper:", num_upper))
+      
+      if (num_lower < 0 | num_lower %in% df$value) {
+        
+        df$value[row] <- num_upper
+        
+      } else {
+        
+        df$value[row] <- num_lower
+        
+      }
+    }    
+  }
+  
+  return(df)
+  
+}
+```
+
+```{r}
+recaman(40) 
+```
+
+
+```{r}
+
+recaman(100) %>% 
+  mutate(next_value = lead(value),
+         radius = abs(value - next_value) / 2,
+         direction = if_else(n %% 2 == 0, 1, -1)) %>% 
+  ggplot() +
+  geom_arc(aes(x0 = (value + next_value) / 2,
+               y0 = 0,
+               r = radius * direction,
+               start = -pi / 2,
+               end = pi/2),
+           color = "#E83536",
+           size = 0.25) +
+  coord_equal()
+
+```
+

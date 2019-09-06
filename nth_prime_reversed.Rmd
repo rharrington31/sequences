@@ -1,0 +1,60 @@
+---
+title: "nth Prime Reversed"
+author: "Ryan Harrington"
+date: "9/5/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+https://oeis.org/A265326
+
+```{r}
+# install.packages("tidyverse")
+library(tidyverse)
+# install.packages("primes")
+library(primes)
+theme_set(theme_void())
+```
+
+```{r}
+dec2bin <- function(x) {
+  str_remove(paste(as.integer(rev(intToBits(x))), collapse = ""),
+             "^0+")
+  
+}
+
+reverse_chars <- function(string) {
+  string_split = strsplit(as.character(string), split = "")
+  reversed_split = string_split[[1]][nchar(string):1]
+  paste(reversed_split, collapse = "")
+} 
+
+bin2dec <- function(x) {
+  max_degree <- nchar(x)
+  bits <- rev(unlist(strsplit(x, "")))
+  sum(as.numeric(bits) * 2 ^ seq(from = 0, to = max_degree - 1, by = 1))
+}
+```
+
+```{r}
+
+nth_prime_df <-
+  data.frame(primes = generate_primes(0, 100000)) %>% 
+  mutate(binary = map_chr(primes, dec2bin),
+         binary_rev = map_chr(binary, reverse_chars),
+         new_value = map_dbl(binary_rev, bin2dec),
+         fx = primes - new_value)
+
+```
+
+```{r}
+nth_prime_df %>% 
+  ggplot(aes(x = primes,
+             y = fx)) +
+  geom_point(size = 0.25, color = "#E83536") +
+  coord_equal()
+```
+
