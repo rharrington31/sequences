@@ -17,6 +17,8 @@ library(ggforce)
 theme_set(theme_void())
 ```
 
+https://oeis.org/A005132
+
 ```{r}
 initial <- 0
 ```
