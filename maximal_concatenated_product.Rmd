@@ -1,0 +1,86 @@
+---
+title: "Maximal product of any two numbers whose concatenation is n"
+author: "Ryan Harrington"
+date: "9/5/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+https://oeis.org/A035930
+
+```{r}
+# install.packages("tidyverse")
+library(tidyverse)
+theme_set(theme_void())
+```
+
+```{r}
+# count nchar
+# if nchar == 1, then return 0
+# determine number of splits
+# map split numbers to substr
+# select highest value
+```
+
+```{r}
+
+split_multiplication <- function(value  = as.numeric(), 
+                                 from_x = as.numeric(), 
+                                 to_x   = as.numeric(), 
+                                 from_y = as.numeric(), 
+                                 to_y   = as.numeric()) {
+  
+  first <- as.numeric(substr(value, from_x, to_x))
+  second <- as.numeric(substr(value, from_y, to_y))
+  first * second
+  
+}
+
+max_concat_product <- function(number = is.numeric()) {
+  
+  chars <- nchar(number)
+  
+  if (chars == 1) {
+    
+    return(0)
+    
+  } else {
+    
+    split_vals <- seq(from = 1, to = chars - 1, by = 1)
+    
+    mult_vals <- 
+      split_vals %>% 
+      map_dbl(~split_multiplication(
+        value  = number,
+        from_x = 1,
+        to_x   = .x,
+        from_y = .x + 1,
+        to_y   = chars)) %>% 
+      unlist()
+    
+    max(mult_vals)
+    
+  }
+  
+}
+```
+
+```{r}
+
+products <- 
+  data.frame(n = 1:100000) %>% 
+  mutate(a_n = map_dbl(n, max_concat_product))
+```
+
+```{r}
+products %>% 
+  ggplot(aes(x = n,
+             y = a_n)) +
+  geom_point(color = "#e83536",
+             size = 0.01) +
+  coord_equal()
+```
+
