@@ -5,3 +5,4 @@ This repository was inspired by the ["Amazing Graphs"](https://www.numberphile.c
 ## Currently built:
 * [The Recamán sequence](https://oeis.org/A005132)
 * [n-th prime minus its binary reversal](https://oeis.org/A265326)
+* [Maximal product of any two numbers whose concatenation is n](https://oeis.org/A035930)
